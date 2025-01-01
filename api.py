@@ -36,13 +36,14 @@ def authenticate(f):
 
 # users
 @app.route('/user', methods=['POST'])
+@authenticate
 def create_user():
     data = request.get_json()
 
     if 'user' in data and 'password' in data:
         pw = generate_password_hash(data['password'])
         id = str(uuid4())
-        db.users.insert_one({'id': id, 'name': data['user'], 'password': pw, 'admin': False})
+        db.users.insert_one({'id': id, 'name': data['user'], 'password': pw})
         
         return jsonify(db.users.find_one({'id': id}, {'_id': 0}))
     
@@ -51,6 +52,7 @@ def create_user():
 
 
 @app.route('/user', methods=['GET'])
+@authenticate
 def get_all_users():
     limit = request.args.get('limit')
     if limit is not None:
@@ -59,13 +61,15 @@ def get_all_users():
         return jsonify([i for i in db.users.find({}, {'_id': 0})])
 
 @app.route('/user/<id>', methods=['GET'])
+@authenticate
 def get_user_by_id(id):
     return jsonify(db.users.find_one({'id': id}, {'_id': 0}))
 
 @app.route('/user/<id>', methods=['PUT'])
 @authenticate
 def promote(id):
-    db.users.update_one({'id': id}, {'$set': {'admin': True}})
+    data = request.get_json()
+    db.users.update_one({'id': id}, {'$set': data})
     return jsonify(db.users.find_one({'id': id}, {'_id': 0}))
 
 @app.route('/user/<id>', methods=['DELETE'])
@@ -110,6 +114,7 @@ def create_call():
 
 
 @app.route('/call', methods=['GET'])
+@authenticate
 def get_all_calls():
     limit = request.args.get('limit')
     if limit is not None:
@@ -118,13 +123,15 @@ def get_all_calls():
         return jsonify([i for i in db.calls.find({}, {'_id': 0})])
 
 @app.route('/call/<id>', methods=['GET'])
+@authenticate
 def get_call_by_id(id):
     return jsonify(db.calls.find_one({'id': id}, {'_id': 0}))
 
 @app.route('/call/<id>', methods=['PUT'])
 @authenticate
 def edit_call(id):
-    db.calls.update_one({'id': id}, {'$set': {'admin': True}})
+    data = request.get_json()
+    db.calls.update_one({'id': id}, {'$set': data})
     return jsonify(db.calls.find_one({'id': id}, {'_id': 0}))
 
 @app.route('/call/<id>', methods=['DELETE'])
