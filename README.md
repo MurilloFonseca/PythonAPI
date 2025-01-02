@@ -28,4 +28,4 @@ Uma API para gerenciar e manter um sistema de chamados, podendo adicionar, alter
 
 ## Instalação e uso
 Para utilizar a API é necessário um servidor para o banco de dados e outro para a API.
-se o MongoDB e as dependências já estiverem instaladas, basta executar o arquivo 'api.py' que a API já estará rodando em um servidor local.
+se o MongoDB e o Python, bem como suas dependências já estiverem instaladas, basta executar o arquivo 'api.py' que a API já estará rodando em um servidor local.
